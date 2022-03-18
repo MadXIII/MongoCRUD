@@ -6,6 +6,7 @@ import (
 	"time"
 
 	"github.com/madxiii/mongocrud/internal/database"
+	"github.com/madxiii/mongocrud/internal/server"
 )
 
 func main() {
@@ -25,5 +26,14 @@ func main() {
 
 	if err = client.Ping(ctx, nil); err != nil {
 		log.Fatalf("Fatal main Ping error: %s", err)
+	}
+
+	store := database.Store{}
+	store.InitCollection(client)
+
+	serv := server.Constr(store)
+
+	if err = serv.Router.Run(":8989"); err != nil {
+		log.Fatal(err.Error())
 	}
 }

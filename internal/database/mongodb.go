@@ -16,10 +16,10 @@ func NewClient(uri string) (*mongo.Client, error) {
 	if err != nil {
 		return nil, fmt.Errorf("NewClient, NewClient: %w", err)
 	}
-
 	return client, nil
 }
 
-func (s *Store) InitStore(client *mongo.Client) error {
+func (s *Store) InitCollection(client *mongo.Client) error {
+	s.Collection = client.Database("post").Collection("users")
 	return nil
 }
