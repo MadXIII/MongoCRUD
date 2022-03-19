@@ -1,9 +1,10 @@
 package server
 
 import (
+	"log"
+
 	"github.com/gin-gonic/gin"
 	"github.com/madxiii/mongocrud/internal/database"
-	"github.com/madxiii/mongocrud/internal/handlers"
 )
 
 type Server struct {
@@ -16,11 +17,15 @@ func Constr(store database.Store) *Server {
 }
 
 func (s *Server) Routes() {
-	s.Router.Group("/users")
+	group := s.Router.Group("/users")
 	{
-		s.Router.GET("/:id", handlers.CreateUser)
-		s.Router.POST("/", handlers.CreateUser)
-		s.Router.PUT("/", handlers.CreateUser)
-		s.Router.DELETE("/", handlers.CreateUser)
+		group.GET("/", s.GetUsers)
+		group.POST("/", s.CreateUser)
+		group.PUT("/:id", s.UpdateUser)
+		group.DELETE("/:id", s.DeleteUser)
+	}
+
+	if err := s.Router.Run(":8989"); err != nil {
+		log.Fatal(err.Error())
 	}
 }

@@ -1,8 +1,11 @@
 package database
 
 import (
+	"context"
 	"fmt"
 
+	"github.com/madxiii/mongocrud/internal/models"
+	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
@@ -21,5 +24,42 @@ func NewClient(uri string) (*mongo.Client, error) {
 
 func (s *Store) InitCollection(client *mongo.Client) error {
 	s.Collection = client.Database("post").Collection("users")
+	return nil
+}
+
+func (s *Store) Find(c context.Context) ([]models.User, error) {
+	var users []bson.M
+
+	filter := bson.M{}
+	cursor, err := s.Collection.Find(c, filter)
+	if err != nil {
+		return nil, fmt.Errorf("database Find, Find: %w", err)
+	}
+
+	cursor.All(c, &users)
+
+	fmt.Println(&users)
+	return nil, nil
+}
+
+func (s *Store) Insert(c context.Context, user models.User) error {
+	_, err := s.Collection.InsertOne(c, user)
+	if err != nil {
+		return fmt.Errorf("database Insert, InsertOne: %w", err)
+	}
+	// id, ok := res.InsertedID.(primitive.ObjectID)
+	// if ok {
+	// 	fmt.Println("true", id)
+	// 	return nil
+	// }
+	// fmt.Println("false", id)
+	return nil
+}
+
+func (s *Store) Update(c context.Context, user models.User) error {
+	return nil
+}
+
+func (s *Store) Delete(c context.Context, user models.User) error {
 	return nil
 }

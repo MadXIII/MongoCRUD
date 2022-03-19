@@ -33,7 +33,5 @@ func main() {
 
 	serv := server.Constr(store)
 
-	if err = serv.Router.Run(":8989"); err != nil {
-		log.Fatal(err.Error())
-	}
+	serv.Routes()
 }
