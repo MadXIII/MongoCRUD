@@ -1,6 +1,8 @@
 package server
 
 import (
+	"net/http"
+
 	"github.com/gin-gonic/gin"
 	"github.com/madxiii/mongocrud/internal/models"
 )
@@ -11,6 +13,7 @@ func (s *Server) GetUsers(c *gin.Context) {
 		c.JSON(500, gin.H{
 			"error": true,
 		})
+		return
 	}
 	c.JSON(200, users)
 }
@@ -22,8 +25,15 @@ func (s *Server) CreateUser(c *gin.Context) {
 			"error":   true,
 			"message": "invalid request body",
 		})
+		return
 	}
-	s.Store.Insert(c.Request.Context(), user)
+	if err := s.Store.Insert(c.Request.Context(), user); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"error":   true,
+			"message": err.Error(),
+		})
+		return
+	}
 
 	c.JSON(200, gin.H{
 		"error": false,
