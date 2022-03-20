@@ -1,6 +1,7 @@
 package server
 
 import (
+	"fmt"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -15,7 +16,10 @@ func (s *Server) GetUsers(c *gin.Context) {
 		})
 		return
 	}
-	c.JSON(200, users)
+	c.JSON(200, gin.H{
+		"error":   false,
+		"message": users,
+	})
 }
 
 func (s *Server) CreateUser(c *gin.Context) {
@@ -36,12 +40,27 @@ func (s *Server) CreateUser(c *gin.Context) {
 	}
 
 	c.JSON(200, gin.H{
-		"error": false,
+		"error":   false,
+		"message": "user created",
 	})
 }
 
 func (s *Server) UpdateUser(c *gin.Context) {
+	id := c.Param("id")
+	if err := s.Store.Update(c.Request.Context(), id); err != nil {
+		c.JSON(400, gin.H{
+			"error":   true,
+			"message": "user not found",
+		})
+		return
+	}
+
+	c.JSON(200, gin.H{
+		"error":   false,
+		"message": "user updated",
+	})
 }
 
 func (s *Server) DeleteUser(c *gin.Context) {
+	fmt.Println("Test")
 }

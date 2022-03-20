@@ -6,6 +6,7 @@ import (
 
 	"github.com/madxiii/mongocrud/internal/models"
 	"go.mongodb.org/mongo-driver/bson"
+	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
@@ -27,7 +28,7 @@ func (s *Store) InitCollection(client *mongo.Client) error {
 	return nil
 }
 
-func (s *Store) Find(c context.Context) ([]models.User, error) {
+func (s *Store) Find(c context.Context) ([]primitive.M, error) {
 	var users []bson.M
 
 	filter := bson.M{}
@@ -38,8 +39,7 @@ func (s *Store) Find(c context.Context) ([]models.User, error) {
 
 	cursor.All(c, &users)
 
-	fmt.Println(&users)
-	return nil, nil
+	return users, nil
 }
 
 func (s *Store) Insert(c context.Context, user models.User) error {
@@ -61,7 +61,7 @@ func (s *Store) Insert(c context.Context, user models.User) error {
 	return nil
 }
 
-func (s *Store) Update(c context.Context, user models.User) error {
+func (s *Store) Update(c context.Context, id string) error {
 	return nil
 }
 
