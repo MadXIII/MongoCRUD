@@ -43,11 +43,13 @@ func (s *Store) Find(c context.Context) ([]primitive.M, error) {
 }
 
 func (s *Store) Insert(c context.Context, user models.User) error {
-	res, err := s.Collection.Indexes().CreateOne(c, mongo.IndexModel{Keys: bson.D{{Key: "email", Value: 1}}, Options: options.Index().SetUnique(true)})
+	_, err := s.Collection.Indexes().CreateMany(c, []mongo.IndexModel{
+		{Keys: bson.D{{Key: "nickname", Value: 1}}, Options: options.Index().SetUnique(true)},
+		{Keys: bson.D{{Key: "email", Value: 1}}, Options: options.Index().SetUnique(true)},
+	})
 	if err != nil {
 		return fmt.Errorf("database Insert, CreateOne: %w", err)
 	}
-	fmt.Println("Res:", res)
 	_, err = s.Collection.InsertOne(c, user)
 	if err != nil {
 		return fmt.Errorf("database Insert, InsertOne: %w", err)
