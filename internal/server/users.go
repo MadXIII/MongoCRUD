@@ -24,7 +24,7 @@ func (s *Server) GetUsers(c *gin.Context) {
 func (s *Server) CreateUser(c *gin.Context) {
 	var user models.User
 	if err := c.ShouldBindJSON(&user); err != nil {
-		c.JSON(http.StatusUnprocessableEntity, gin.H{
+		c.JSON(http.StatusBadRequest, gin.H{
 			"message": "invalid request body",
 		})
 		return
@@ -41,11 +41,19 @@ func (s *Server) CreateUser(c *gin.Context) {
 }
 
 func (s *Server) UpdateUser(c *gin.Context) {
+	var newUser models.User
 	id := c.Param("id")
-	if err := s.Store.Update(c.Request.Context(), id); err != nil {
+	if err := c.ShouldBindJSON(&newUser); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"message": "invalid request body",
+		})
+		return
+	}
+	if err := s.Store.Update(c.Request.Context(), id, newUser); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"message": "user not found",
 		})
+		fmt.Println(err)
 		return
 	}
 	c.JSON(http.StatusOK, gin.H{
