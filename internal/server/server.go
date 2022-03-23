@@ -13,7 +13,10 @@ type Server struct {
 }
 
 func Constr(store database.Store) *Server {
-	return &Server{store, gin.Default()}
+	return &Server{
+		Store:  store,
+		Router: gin.Default(),
+	}
 }
 
 func (s *Server) Routes() {

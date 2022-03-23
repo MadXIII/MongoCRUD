@@ -54,12 +54,6 @@ func (s *Store) Insert(c context.Context, user models.User) error {
 	if err != nil {
 		return fmt.Errorf("database Insert, InsertOne: %w", err)
 	}
-	// id, ok := res.InsertedID.(primitive.ObjectID)
-	// if ok {
-	// 	fmt.Println("true", id)
-	// 	return nil
-	// }
-	// fmt.Println("false", id)
 	return nil
 }
 
@@ -68,21 +62,20 @@ func (s *Store) Update(c context.Context, id string, newData models.User) error 
 	if err != nil {
 		return fmt.Errorf("datatbase Update, ObjectIDFromHex: %w", err)
 	}
-	filter := bson.M{"_id": bson.M{"$eq": docID}}
+	filter := bson.M{"_id": docID}
 	update := bson.M{
 		"$set": bson.M{
 			"nickname": newData.Nickname,
+			"email":    newData.Email,
+			"name":     newData.Name,
+			"age":      newData.Age,
 		},
-		// {"email": newData.Email},
-		// {"name": newData.Name},
-		// {"age": newData.Age},
 	}
 
-	res, err := s.Collection.UpdateByID(c, filter, update)
+	_, err = s.Collection.UpdateOne(c, filter, update)
 	if err != nil {
 		return fmt.Errorf("database Update, UpdateOne: %w", err)
 	}
-	fmt.Println(res)
 	return nil
 }
 
