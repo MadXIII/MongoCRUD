@@ -86,6 +86,17 @@ func (s *Store) Update(c context.Context, id string, newData models.User) error 
 	return nil
 }
 
-func (s *Store) Delete(c context.Context, user models.User) error {
+func (s *Store) Delete(c context.Context, id string) error {
+	docID, err := primitive.ObjectIDFromHex(id)
+	if err != nil {
+		return fmt.Errorf("database Delete, ObjectIDFromHex: %w", err)
+	}
+
+	filter := bson.M{"_id": bson.M{"$eq": docID}}
+
+	_, err = s.Collection.DeleteOne(c, filter)
+	if err != nil {
+		return fmt.Errorf("database Delete, DeleteOne: %w", err)
+	}
 	return nil
 }

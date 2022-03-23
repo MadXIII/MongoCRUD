@@ -62,5 +62,15 @@ func (s *Server) UpdateUser(c *gin.Context) {
 }
 
 func (s *Server) DeleteUser(c *gin.Context) {
-	fmt.Println("Test")
+	id := c.Param("id")
+	if err := s.Store.Delete(c.Request.Context(), id); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"message": "user not found",
+		})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{
+		"message": "User Deleted",
+	})
 }
