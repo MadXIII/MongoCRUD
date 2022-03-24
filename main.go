@@ -13,7 +13,7 @@ func main() {
 	ctx, cancelFunc := context.WithTimeout(context.Background(), 3*time.Second)
 	defer cancelFunc()
 
-	client, err := database.NewClient("mongodb://localhost:27017")
+	client, err := database.NewClient("mongodb://mongocrud_mongodb_1:27017")
 	if err != nil {
 		log.Fatalf("Fatal main error: %s", err)
 	}

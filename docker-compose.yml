@@ -1,0 +1,22 @@
+version: '3'
+services:
+  server:
+    build: .
+    ports:
+      - 8989:8989
+    environment:
+      MONGO_URI: "mongodb://mongodb:27017"
+    links:
+      - mongodb
+    networks:
+      - test
+  mongodb:
+    image: mongo:5.0
+    ports:
+      - 27017:27017
+    networks:
+      - test
+networks:
+  test:
+    name: "test"
+    driver: bridge
